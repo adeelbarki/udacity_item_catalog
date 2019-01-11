@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+{% block content %}
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+        <h1>{{ legend }}</h1>
+        <p>{{form.title.label}}</p>
+        <p>{{form.title}}</p>
+        <hr>
+        <p>{{form.description.label}}</p>
+        <p>{{form.description}}</p>
+        <hr>
+        {{form.select.label}}
+        {{form.select}}
+        <br>
+        {{form.submit}}
+{% endblock %}

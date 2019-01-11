@@ -1,0 +1,30 @@
+{% for post in posts %}
+        <h1>{{ post.name }}</h1>
+        {% for item in posts %}
+            <p>{{ item.get("items")[0].get("title") }}</p>
+
+
+select = SelectField('Select', choices=[('soccer', 'Soccer'), ('basketball', 'Basketball')])
+
+{% extends 'layout.html' %}
+{% block content %}
+    {% for category in categories %}
+    <h1> {{category.name }}</h1>
+        {% for item in Item %}
+            {% if category.id == item.cat_id : %}
+                <p>{{ item.title }}</p>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+    <a href="{{url_for('new_item')}}">Add New Item</a>
+{% endblock %}
+
+category_1 = Category(name='Soccer')
+category_2 = Category(name='Basketball')
+category_3 = Category(name='Baseball')
+category_4 = Category(name='Frisbee')
+category_5 = Category(name='Snowboarding')
+category_6 = Category(name='Rock Climbing')
+category_7 = Category(name='Football')
+category_8 = Category(name='Skating')

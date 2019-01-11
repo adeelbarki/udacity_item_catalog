@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+{% block content %}
+    {% for category in categories %}
+    <h1> {{category.name }}</h1>
+        {% for item in items %}
+            {% if category.id == item.cat_id %}
+                <p>{{ item.title }}</p>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+    <a href="{{url_for('new_item')}}">Add New Item</a>
+{% endblock %}
