@@ -1,14 +1,21 @@
 {% extends 'layout.html' %}
 {% block content %}
-    {% for category in categories %}
-    <h1> {{category.name }}</h1>
-        {% for item in items %}
-            {% if category.id == item.cat_id %}
-                <a href="{{url_for('item', item_id=item.id)}}">{{ item.title }}</a>
-                <br>
-            {% endif %}
+<div class="container">
+    <div class="row">
+        {% for category in categories %}
+        <div class="card" style="width: 18rem; margin: 50px;">
+            <div class="card-body">
+                <h5 class="card-title">{{category.name }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Items</h6>
+                {% for item in items %}
+                    {% if category.id == item.cat_id %}
+                        <a class="card-link" href="{{url_for('item', item_id=item.id)}}">{{ item.title }}</a>
+                        <br>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
         {% endfor %}
-    {% endfor %}
-
-    <a href="{{url_for('new_item')}}">Add New Item</a>
+    </div>
+</div>
 {% endblock %}

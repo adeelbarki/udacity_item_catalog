@@ -1,8 +1,8 @@
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, jsonify
 from project import app, db
 from project.database_setup import Category, Item
 from project.forms import ItemForm
-
+from sqlalchemy.orm import sessionmaker, relationship, joinedload
 
 @app.route("/")
 @app.route("/catalog")
@@ -31,6 +31,13 @@ def item(item_id):
     category = Category.query.filter_by(id=item.cat_id).first()
     return render_template('item.html', title=item.title, item=item, category=category)
 
+@app.route("/catalog.json")
+def get_catalog():
+    category = Category.query.all()
+    #category = Category.query.options(joinedload(Category.items)).all()
+    items = Item.query.all()
+    #return jsonify(Category=[i.serialize for i in category])
+    return jsonify(Category=[dict(c.serialize, items=[i.serialize for i in c.items]) for c in category])
 
 @app.route("/item/<item_id>/edit", methods=['GET', 'POST'])
 def edit_item(item_id):

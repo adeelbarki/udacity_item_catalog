@@ -1,8 +1,10 @@
 {% extends 'layout.html' %}
 {% block content %}
 <form action="" method="post">
-    {{ form.hidden_tag() }}
-        <h1>{{ legend }}</h1>
+<div class="card">
+    <h5 class="card-header">{{ legend }}</h5>
+    <div class="card-body">
+        {{ form.hidden_tag() }}
         <p>{{form.title.label}}</p>
         <p>{{form.title}}</p>
         <hr>
@@ -13,4 +15,7 @@
         {{form.select}}
         <br>
         {{form.submit}}
+    </div>
+</div>
+
 {% endblock %}
