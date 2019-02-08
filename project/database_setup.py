@@ -1,5 +1,6 @@
 from project import db
 
+
 class Category(db.Model):
     __tablename__ = 'category'
     name = db.Column(db.String(80), nullable=False)
