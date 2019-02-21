@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify
 from project import app, db
-from project.database_setup import Category, Item
+from project.database_setup import Category, Item, User
 from project.forms import ItemForm
 from sqlalchemy.orm import sessionmaker, relationship, joinedload
 
@@ -19,12 +19,17 @@ CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Item Catalog Application"
 
+
 @app.route("/")
 @app.route("/catalog")
 def catalog():
+    if 'username' not in login_session:
+        current_user = False
+    else:
+        current_user = True
     categories = Category.query.all()
     items = Item.query.all()
-    return render_template("catalog.html", categories=categories, items=items)
+    return render_template("catalog.html", categories=categories, items=items, current_user=current_user)
 
 
 @app.route('/login')
@@ -33,6 +38,12 @@ def showLogin():
                     for x in range(32))
     login_session['state'] = state
     return render_template('login.html', STATE=state)
+
+@app.route('/logout')
+def showLogout():
+    return redirect(url_for('gdisconnect'))
+
+
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
@@ -106,6 +117,12 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
+    #See if user exists, if it doesn't create a new user
+    user_id = getUserId(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
+
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -116,6 +133,29 @@ def gconnect():
     flash("you are now logged in as %s" % login_session['username'])
     print ("done!")
     return output
+
+
+def createUser(login_session):
+    newUser = User(name = login_session['username'], email = login_session['email'], picture = login_session['picture'])
+    db.session.add(newUser)
+    db.session.commit()
+    user = User.query.filter_by(email = login_session['email']).one()
+    return user.id
+
+
+def getUserInfo(user_id):
+    user = User.query.filter_by(id = user_id).one()
+    return user
+
+
+def getUserId(email):
+    try:
+        user = User.query.filter_by(email = email).one()
+        return user.id
+    except:
+        return None
+
+
 
 @app.route('/gdisconnect')
 def gdisconnect():
@@ -152,23 +192,30 @@ def gdisconnect():
 @app.route("/catalog/new", methods=['GET', 'POST'] )
 def new_item():
     if 'username' not in login_session:
+        current_user = False
         return redirect(url_for('showLogin'))
+    else:
+        current_user = True
     form = ItemForm()
     if form.validate_on_submit():
         category = Category.query.filter_by(name=form.select.data).first()
-        item = Item(title=form.title.data, description=form.description.data, cat_id=category.id)
+        item = Item(title=form.title.data, description=form.description.data, cat_id=category.id, user_id=login_session['user_id'])
         db.session.add(item)
         db.session.commit()
         flash('Your item is added', 'success')
         return redirect(url_for('catalog'))
-    return render_template('addNewItem.html', title='Add Item', form=form, legend='Add Item')
+    return render_template('addNewItem.html', title='Add Item', form=form, legend='Add Item', current_user=current_user)
 
 
 @app.route("/item/<item_id>/")
 def item(item_id):
+    if 'username' not in login_session:
+        current_user = False
+    else:
+        current_user = True
     item = Item.query.get_or_404(item_id)
     category = Category.query.filter_by(id=item.cat_id).first()
-    return render_template('item.html', title=item.title, item=item, category=category)
+    return render_template('item.html', title=item.title, item=item, category=category, current_user=current_user)
 
 @app.route("/catalog.json")
 def get_catalog():
@@ -181,32 +228,45 @@ def get_catalog():
 @app.route("/item/<item_id>/edit", methods=['GET', 'POST'])
 def edit_item(item_id):
     if 'username' not in login_session:
+        current_user = False
         return redirect(url_for('showLogin'))
+    else:
+        current_user = True
+    user = User.query.filter_by(name=login_session['username']).first()
     item = Item.query.get_or_404(item_id)
     category = Category.query.filter_by(id=item.cat_id).first()
     form = ItemForm()
-    if form.validate_on_submit():
-        item.title = form.title.data
-        item.description = form.description.data
-        category = Category.query.filter_by(name=form.select.data).first()
-        item.cat_id = category.id
-        db.session.commit()
-        flash("Item has been edited")
-        return redirect(url_for('item', item_id=item.id))
-    elif request.method == 'GET':
-        form.title.data = item.title
-        form.description.data = item.description
-        form.select.data = category.name
-    return render_template('addNewItem.html', title='Edit Item', form=form, 
-                                legend='Edit Item')
+    if user.id == item.user_id:
+        if form.validate_on_submit():
+            item.title = form.title.data
+            item.description = form.description.data
+            category = Category.query.filter_by(name=form.select.data).first()
+            item.cat_id = category.id
+            db.session.commit()
+            flash("Item has been edited")
+            return redirect(url_for('item', item_id=item.id))
+        elif request.method == 'GET':
+            form.title.data = item.title
+            form.description.data = item.description
+            form.select.data = category.name
+            return render_template('addNewItem.html', title='Edit Item', form=form, 
+                                legend='Edit Item', current_user=current_user)
+    else:
+        flash("You are not permitted to edit this item. Invalid user!")
+        return redirect(url_for('showLogin'))
 
 
 @app.route("/item/<item_id>/delete", methods=['POST'])
 def delete_item(item_id):
     if 'username' not in login_session:
         return redirect(url_for('showLogin'))
+    user = User.query.filter_by(name=login_session['username']).first()
     item = Item.query.get_or_404(item_id)
-    db.session.delete(item)
-    db.session.commit()
-    flash('Item is deleted', 'success')
-    return redirect(url_for('catalog'))
+    if user.id == item.user_id:
+        db.session.delete(item)
+        db.session.commit()
+        flash('Item is deleted', 'success')
+        return redirect(url_for('catalog'))
+    else:
+        flash("You are not permitted to delete this item. Invalid user!")
+        return redirect(url_for('showLogin'))

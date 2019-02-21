@@ -35,11 +35,20 @@
                     <a class="nav-link" href="{{url_for('new_item')}}">Add new item</a>
                 </li>
             </ul>
+            
             <form class="form-inline my-2 my-lg-0">    
+                {% if current_user == True %}
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                            <a class="nav-link" href="{{url_for('showLogout')}}">
+                        Logout</a></button>
+                {% else %}
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
                             <a class="nav-link" href="{{url_for('showLogin')}}">
                         Login</a></button>
-                  </form>
+                {% endif %}
+            </form>
+            
+
         </div>
     </nav>
 
