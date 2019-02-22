@@ -1,13 +1,16 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<div class="card">
+<div class="card" style="width: 50rem; margin-top: 80px; margin-left: -100px">
   <div class="card-header">
     <strong>{{category.name}}</strong>
   </div>
-  <div class="card-body">
+  <div class="card-body" >
     <h5 class="card-title">{{item.title}}</h5>
     <p class="card-text">{{item.description}}</p>
+    <hr>
+    <p class="card-text"><i>Added by: {{user.name}}</i><br>
+    <small class="text-muted">Posted: {{ item.date_posted.strftime('%a %d, %B %Y') }}</small></p>
     <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('edit_item', item_id=item.id )}}">
       Edit</a>
     <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">

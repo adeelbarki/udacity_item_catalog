@@ -32,6 +32,10 @@ def catalog():
     return render_template("catalog.html", categories=categories, items=items, current_user=current_user)
 
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
 @app.route('/login')
 def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
@@ -130,7 +134,7 @@ def gconnect():
     output += '<img src="'
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % login_session['username'])
+    flash("you are now logged in as %s" % login_session['username'], 'success')
     print ("done!")
     return output
 
@@ -181,7 +185,7 @@ def gdisconnect():
         del login_session['picture']
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
-        flash("Successfully logged out")
+        flash("Successfully logged out", 'success')
         return redirect(url_for('catalog'))
         
     else:
@@ -215,7 +219,8 @@ def item(item_id):
         current_user = True
     item = Item.query.get_or_404(item_id)
     category = Category.query.filter_by(id=item.cat_id).first()
-    return render_template('item.html', title=item.title, item=item, category=category, current_user=current_user)
+    user = User.query.filter_by(id=item.user_id).first()
+    return render_template('item.html', title=item.title, item=item, category=category, user=user, current_user=current_user)
 
 @app.route("/catalog.json")
 def get_catalog():
@@ -243,7 +248,7 @@ def edit_item(item_id):
             category = Category.query.filter_by(name=form.select.data).first()
             item.cat_id = category.id
             db.session.commit()
-            flash("Item has been edited")
+            flash("Item has been edited", 'success')
             return redirect(url_for('item', item_id=item.id))
         elif request.method == 'GET':
             form.title.data = item.title
