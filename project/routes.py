@@ -14,10 +14,13 @@ import httplib2
 import json
 from flask import make_response
 import requests
+from sqlalchemy import desc
 
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Item Catalog Application"
+
+
 
 
 @app.route("/")
@@ -29,19 +32,26 @@ def catalog():
         current_user = True
     categories = Category.query.all()
     items = Item.query.all()
-    return render_template("catalog.html", categories=categories, items=items, current_user=current_user)
+    dated_items = Item.query.order_by(desc(Item.date_posted)).limit(5).all()
+    return render_template("catalog.html", categories=categories, items=items, dated_items=dated_items, current_user=current_user)
 
 
 @app.route("/about")
 def about():
-    return render_template("about.html")
+    categories = Category.query.all()
+    items = Item.query.all()
+    dated_items = Item.query.order_by(desc(Item.date_posted)).limit(5).all()
+    return render_template("about.html", categories=categories, dated_items=dated_items)
 
 @app.route('/login')
 def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in range(32))
     login_session['state'] = state
-    return render_template('login.html', STATE=state)
+    categories = Category.query.all()
+    items = Item.query.all()
+    dated_items = Item.query.order_by(desc(Item.date_posted)).limit(5).all()
+    return render_template('login.html', STATE=state, categories=categories, items=items, dated_items=dated_items)
 
 @app.route('/logout')
 def showLogout():
@@ -202,9 +212,9 @@ def new_item():
         current_user = True
     form = ItemForm()
     if form.validate_on_submit():
-        category = Category.query.filter_by(name=form.select.data).first()
-        item = Item(title=form.title.data, description=form.description.data, cat_id=category.id, user_id=login_session['user_id'])
-        db.session.add(item)
+        category_add = Category.query.filter_by(name=form.select.data).first()
+        item_add = Item(title=form.title.data, description=form.description.data, cat_id=category_add.id, user_id=login_session['user_id'])
+        db.session.add(item_add)
         db.session.commit()
         flash('Your item is added', 'success')
         return redirect(url_for('catalog'))
@@ -217,10 +227,13 @@ def item(item_id):
         current_user = False
     else:
         current_user = True
+    categories = Category.query.all()
+    items = Item.query.all()
+    dated_items = Item.query.order_by(desc(Item.date_posted)).limit(5).all()
     item = Item.query.get_or_404(item_id)
     category = Category.query.filter_by(id=item.cat_id).first()
     user = User.query.filter_by(id=item.user_id).first()
-    return render_template('item.html', title=item.title, item=item, category=category, user=user, current_user=current_user)
+    return render_template('item.html', title=item.title, item=item, category=category, user=user, current_user=current_user, categories=categories, items=items, dated_items=dated_items)
 
 @app.route("/catalog.json")
 def get_catalog():
@@ -237,6 +250,9 @@ def edit_item(item_id):
         return redirect(url_for('showLogin'))
     else:
         current_user = True
+    categories = Category.query.all()
+    items = Item.query.all()
+    dated_items = Item.query.order_by(desc(Item.date_posted)).limit(5).all()
     user = User.query.filter_by(name=login_session['username']).first()
     item = Item.query.get_or_404(item_id)
     category = Category.query.filter_by(id=item.cat_id).first()
@@ -255,9 +271,9 @@ def edit_item(item_id):
             form.description.data = item.description
             form.select.data = category.name
             return render_template('addNewItem.html', title='Edit Item', form=form, 
-                                legend='Edit Item', current_user=current_user)
+                                legend='Edit Item', current_user=current_user, categories=categories, items=items, dated_items=dated_items)
     else:
-        flash("You are not permitted to edit this item. Invalid user!")
+        flash("You are not permitted to edit this item. Invalid user!", 'danger')
         return redirect(url_for('showLogin'))
 
 
@@ -273,5 +289,5 @@ def delete_item(item_id):
         flash('Item is deleted', 'success')
         return redirect(url_for('catalog'))
     else:
-        flash("You are not permitted to delete this item. Invalid user!")
+        flash("You are not permitted to delete this item. Invalid user!", 'danger')
         return redirect(url_for('showLogin'))
