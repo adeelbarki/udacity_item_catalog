@@ -13,7 +13,10 @@ This demo website is  a blog website that has certain features that displays:
 * a functionality to edit, delete or add item. User must be logged in using 3rd party authentication (Google)
 * logging in and functionality where a user can add, edit, or delete item information.
 * items that can be edited or deleted only by user who posted it.
-* A JSON endpoint, (localhost/catalog.json)
+* A JSON endpoint
+    Categories & Items - (localhost/catalog/JSON) 
+    Categories - (localhost/catalog/categories/JSON)
+    Items - (localhost/catalog/items/JSON)
 
 ## Resources
 

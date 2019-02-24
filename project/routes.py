@@ -256,18 +256,6 @@ def item(item_id):
         items=items, dated_items=dated_items)
 
 
-@app.route("/catalog.json")
-def get_catalog():
-    category = Category.query.all()
-    # category = Category.query.options(joinedload(Category.items)).all()
-    items = Item.query.all()
-    # return jsonify(Category=[i.serialize for i in category])
-    return jsonify(
-        Category=[dict(
-            c.serialize, items=[i.serialize for i in c.items])
-            for c in category])
-
-
 @app.route("/item/<item_id>/edit", methods=['GET', 'POST'])
 def edit_item(item_id):
     if 'username' not in login_session:
@@ -321,3 +309,28 @@ def delete_item(item_id):
             "You are not permitted to delete this item. Invalid user!",
             'danger')
         return redirect(url_for('showLogin'))
+
+
+@app.route("/catalog/JSON")
+@app.route("/catalog.json")
+def get_catalog():
+    category = Category.query.all()
+    # category = Category.query.options(joinedload(Category.items)).all()
+    items = Item.query.all()
+    # return jsonify(Category=[i.serialize for i in category])
+    return jsonify(
+        Category=[dict(
+            c.serialize, items=[i.serialize for i in c.items])
+            for c in category])
+
+
+@app.route('/catalog/categories/JSON')
+def categoriesJSON():
+    categories = Category.query.all()
+    return jsonify(categories=[c.serialize for c in categories])
+
+
+@app.route('/catalog/items/JSON')
+def itemsJSON():
+    items = Item.query.all()
+    return jsonify(items=[i.serialize for i in items])
