@@ -4,6 +4,10 @@ from wtforms import StringField, SubmitField, SelectField, BooleanField,\
 from wtforms.validators import DataRequired, Length
 
 
+# ----------------------------------------------------------
+# Category Choices
+# ----------------------------------------------------------
+
 class ItemForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])

@@ -13,20 +13,23 @@ This demo website is  a blog website that has certain features that displays:
 * a functionality to edit, delete or add item. User must be logged in using 3rd party authentication (Google)
 * logging in and functionality where a user can add, edit, or delete item information.
 * items that can be edited or deleted only by user who posted it.
-* A JSON endpoint
-    Categories & Items - (localhost/catalog/JSON) 
-    Categories - (localhost/catalog/categories/JSON)
-    Items - (localhost/catalog/items/JSON)
+* A JSON endpoint contains 3 links:
+
+    - Categories & Items - (localhost/catalog/JSON) 
+    - Categories - (localhost/catalog/categories/JSON)
+    - Items - (localhost/catalog/items/JSON)
 
 ## Resources
 
-The project contains a _project_ folder and files _run.py_ and _README.md_. These files can be cloned from [github link]( https://github.com/adeelbarki/udacity_item_catalog.git ) using this commad
+This application contains a _project_ folder and files _run.py_ and _README.md_. These files can be cloned from [github link]( https://github.com/adeelbarki/udacity_item_catalog.git ) using this commad
 
 `$ git clone https://github.com/adeelbarki/udacity_item_catalog.git`
 
 Make sure to `$ cd udacity_item_catalog` in terminal to access all files. 
 
-To run code succesfully make sure that the required files are downloaded and unzip in udacity_item_catalog folder. The zip files can also be downloaded from google drive link:
+### Additional Files
+
+To run code succesfully make sure that additional files are downloaded and unzip in udacity_item_catalog folder. The zip files can also be downloaded from google drive link:
 
 * venv - Virtual environment contains all the required flask related modules used in application.
 
@@ -36,20 +39,20 @@ To run code succesfully make sure that the required files are downloaded and unz
 
 _Note_ : _This file must be placed in the same folder with run.py_
 
-* Add client id in template/login.html at `data-clientid="your-client-id"`
+* Don't forget to add client id in template/login.html at `data-clientid="your-client-id-from-google"`
 
 
 ## Initiate Virtual Enivornment
 
-Before running the code make sure to start virtual environment.
+Before running the application make sure to start virtual environment.
 
-Make sure to you are in the item catalog directory
+Make sure you are in the item catalog directory
 
 `$ cd udacity_item_catalog`
 
 Run virtual environment using following command
 
-`$ . venv/bin/activate` ( _To deactivate environmonet just execute coomand `deactivate` in command line_ )
+`$ . venv/bin/activate` ( _To deactivate environmonet just execute comand `deactivate` in command line_ )
 
 
 ## Run the code
@@ -77,5 +80,5 @@ Project Item Catalog is a part of Full Stack Web Development Nanodegree Program 
 
 ## Author
 
-Adeel Ahmed Khan (Adeel Barki)
-_Full Stack Web Developer_
+* Adeel Ahmed Khan (Adeel Barki)
+* _Full Stack Web Developer_

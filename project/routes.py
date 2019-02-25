@@ -1,3 +1,4 @@
+# IMPORTS
 from flask import render_template, url_for, flash, redirect, request, jsonify
 from project import app, db
 from project.database_setup import Category, Item, User
@@ -17,11 +18,17 @@ import requests
 from sqlalchemy import desc
 
 
+# ------------------------------------------------------
+# GCONNECT READ CLIENT_ID
+# ------------------------------------------------------
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Item Catalog Application"
 
 
+# -------------------------------------------------------
+# HOME PAGE
+# -------------------------------------------------------
 @app.route("/")
 @app.route("/catalog")
 def catalog():
@@ -37,6 +44,9 @@ def catalog():
         items=items, dated_items=dated_items, current_user=current_user)
 
 
+# ----------------------------------------
+# ABOUT PAGE
+# ----------------------------------------
 @app.route("/about")
 def about():
     categories = Category.query.all()
@@ -46,6 +56,9 @@ def about():
         "about.html", categories=categories, dated_items=dated_items)
 
 
+# ----------------------------------------
+# LOGIN PAGE
+# ----------------------------------------
 @app.route('/login')
 def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
@@ -59,11 +72,17 @@ def showLogin():
         items=items, dated_items=dated_items)
 
 
+# ---------------------------------------
+# LOGOUT REDIRECT
+# ---------------------------------------
 @app.route('/logout')
 def showLogout():
     return redirect(url_for('gdisconnect'))
 
 
+# ---------------------------------------
+# GOOGLE CONNECT
+# ---------------------------------------
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -156,6 +175,9 @@ def gconnect():
     return output
 
 
+# ---------------------------
+# CREATE USER IN DATABASE
+# ---------------------------
 def createUser(login_session):
     newUser = User(
         name=login_session['username'],
@@ -167,11 +189,17 @@ def createUser(login_session):
     return user.id
 
 
+# ----------------------------
+# READ USER INFO FROM DATABASE
+# ----------------------------
 def getUserInfo(user_id):
     user = User.query.filter_by(id=user_id).one()
     return user
 
 
+# ----------------------------
+# READ USER ID
+# ----------------------------
 def getUserId(email):
     try:
         user = User.query.filter_by(email=email).one()
@@ -180,6 +208,9 @@ def getUserId(email):
         return None
 
 
+# ----------------------------
+# GOOGLE DISCONNECT
+# ----------------------------
 @app.route('/gdisconnect')
 def gdisconnect():
     access_token = login_session.get('access_token')
@@ -216,6 +247,9 @@ def gdisconnect():
         return response
 
 
+# ----------------------------------
+# ADD NEWW ITEM PAGE
+# ----------------------------------
 @app.route("/catalog/new", methods=['GET', 'POST'])
 def new_item():
     if 'username' not in login_session:
@@ -238,6 +272,9 @@ def new_item():
         legend='Add Item', current_user=current_user)
 
 
+# -------------------------------------
+# SPECIFIC ITEM DETAIL
+# -------------------------------------
 @app.route("/item/<item_id>/")
 def item(item_id):
     if 'username' not in login_session:
@@ -256,6 +293,9 @@ def item(item_id):
         items=items, dated_items=dated_items)
 
 
+# ---------------------------------------
+# EDIT ITEM DESCRIPTION
+# ---------------------------------------
 @app.route("/item/<item_id>/edit", methods=['GET', 'POST'])
 def edit_item(item_id):
     if 'username' not in login_session:
@@ -293,6 +333,9 @@ def edit_item(item_id):
         return redirect(url_for('showLogin'))
 
 
+# -----------------------------------------
+# DELETE SPECIFIC ITEM
+# -----------------------------------------
 @app.route("/item/<item_id>/delete", methods=['POST'])
 def delete_item(item_id):
     if 'username' not in login_session:
@@ -311,6 +354,9 @@ def delete_item(item_id):
         return redirect(url_for('showLogin'))
 
 
+# --------------------------------------------
+# JSON ENPOINT INCLUDING CATEGORIES & ITEMS
+# --------------------------------------------
 @app.route("/catalog/JSON")
 @app.route("/catalog.json")
 def get_catalog():
@@ -324,12 +370,18 @@ def get_catalog():
             for c in category])
 
 
+# --------------------------------------------
+# JSON ENDPOINT WITH ONLY CATEGORIES
+# --------------------------------------------
 @app.route('/catalog/categories/JSON')
 def categoriesJSON():
     categories = Category.query.all()
     return jsonify(categories=[c.serialize for c in categories])
 
 
+# --------------------------------------------
+# JSON ENDPOINT WITH ONLY ITEMS
+# --------------------------------------------
 @app.route('/catalog/items/JSON')
 def itemsJSON():
     items = Item.query.all()

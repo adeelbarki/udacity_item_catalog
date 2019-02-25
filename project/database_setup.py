@@ -2,6 +2,9 @@ from datetime import datetime
 from project import db
 
 
+# ---------------------------------------------------
+# User Database Model
+# ---------------------------------------------------
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
@@ -10,6 +13,9 @@ class User(db.Model):
     picture = db.Column(db.String(250))
 
 
+# ---------------------------------------------------
+# Category Database Model
+# ---------------------------------------------------
 class Category(db.Model):
     __tablename__ = 'category'
     name = db.Column(db.String(80), nullable=False)
@@ -26,6 +32,9 @@ class Category(db.Model):
         }
 
 
+# ----------------------------------------------------
+# Item Database Model
+# ----------------------------------------------------
 class Item(db.Model):
     __tablename__ = 'cat_item'
     title = db.Column(db.String(80), nullable=False)
