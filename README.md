@@ -1,6 +1,6 @@
 # Project: Item Catalog (Version 1.0.1)
 
-Visit live application at http://103.3.62.68.xip.io:5000/
+Visit live application at http://103.3.62.68.xip.io/
 
 ## Description
 
