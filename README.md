@@ -1,10 +1,10 @@
 # Project: Item Catalog (Version 1.0.1)
 
+Visit live application at http://103.3.62.68.xip.io:5000/
+
 ## Description
 
 This project is designed for Udacity Full Stack Web Developer Nanodegree Program. Purpose of this project is to create an application using python. The application is a a list of items within a variety of categories and user registration and authentication system. Registered users will have the ability to add, edit and delete their own items. 
-
-Visit live application at http://172.104.160.122
 
 This demo website is  a blog website that has certain features that displays:
 
