@@ -29,11 +29,14 @@ Make sure to `$ cd udacity_item_catalog` in terminal to access all files.
 
 ### Additional Files
 
-To run code succesfully make sure that additional files are downloaded and unzip in udacity_item_catalog folder. The zip files can also be downloaded from google drive link:
-
-* venv - Virtual environment contains all the required flask related modules used in application.
-
-[Google Drive Link:](https://drive.google.com/open?id=1v66ZexoEw9DlaDcX5fGxTtwRDl6zO6fv)
+* Virtual enivornment must be installed to run application
+* Venv can be installed using command 
+    * `$ sudo apt install python3-venv` and
+    * `$ python3 -m venv udacity_item_catalog/venv`
+* Application folder contains a file requirement.txt. It can be used to install all the required modules to the application
+    * Make sure to cd into udacity_item_catalog folder
+    * activate virtual environment by typing `$ . venv/bin/activate`
+    * Install all the dependencies `$ pip install -r requirements.text`
 
 * To run application a file named 'client_secret.json' must be created with google setup for google authentication
 
